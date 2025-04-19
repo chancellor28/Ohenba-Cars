@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OHENBA-KAY'S DRIVE CARS</title>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('HONDA1.jpg') no-repeat center center/cover;
+      min-height: 100vh;
+      color: white;
+      position: relative;
+    }
+
+    .overlay {
+      background-color: rgba(0,0,0,0.7);
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    #paywall {
+      text-align: center;
+      margin: 40px auto;
+    }
+
+    button {
+      padding: 10px 25px;
+      background: gold;
+      border: none;
+      font-size: 1.1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 30px;
+    }
+
+    #filters {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    select {
+      padding: 8px;
+      margin: 0 5px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .cars {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .car {
+      background: #fff;
+      color: #000;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .car img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .car h3 {
+      margin: 10px 0 5px;
+    }
+
+    .car p {
+      margin: 5px 0;
+    }
+
+    .car a {
+      display: inline-block;
+      margin: 5px 8px;
+      padding: 6px 12px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    .call { background: green; }
+    .whatsapp { background: #25D366; }
+    .telegram {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #00acee;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="overlay">
+  <header>
+    <h1>OHENBA-KAY'S DRIVE CARS</h1>
+    <a href="index.html" style="color:#fff; text-decoration:none; margin-right:15px;">Home</a>
+  </header>
+
+  <div id="paywall">
+    <p>Pay <strong>GHS 1</strong> to view all car listings.</p>
+    <button onclick="payWithPaystack()">Pay GHS 1</button>
+  </div>
+
+  <div id="filters" style="display: none;">
+    <select id="typeFilter">
+      <option value="">All Types</option>
+      <option value="SUV">SUV</option>
+      <option value="Sedan">Sedan</option>
+      <option value="Coupe">Coupe</option>
+      <option value="Truck">Truck</option>
+      <option value="Honda">Honda</option>
+      <option value="Hundyai">Hundyai</option>
+    </select>
+
+    <select id="priceFilter">
+      <option value="">All Prices</option>
+      <option value="low">Below GHS 50,000</option>
+      <option value="mid">GHS 50,000 - GHS 100,000</option>
+      <option value="high">Above GHS 100,000</option>
+      <option value="high">Above GHS 200,000</option>
+      <option value="high">Above GHS 300,000</option>
+      <option value="high">Above GHS 400,000</option>
+      <option value="high">Above GHS 500,000 - GHS 600,000 - 700,000, - 800,000</option>
+      
+    </select>
+  </div>
+
+  <div class="cars" id="carList" style="display: none;"></div>
+
+  <div class="telegram">
+    👉 View more of our cheap cars on <a href="https://t.me/kaysdrive" target="_blank">Our Telegram Channel</a>
+  </div>
+</div>
+
+<script>
+  const cars = [];
+
+  const types = ["SUV", "Sedan", "Coupe", "Truck"];
+  for (let i = 1; i <= 200; i++) {
+    const type = types[Math.floor(Math.random() * types.length)];
+    const price = Math.floor(Math.random() * 120000) + 10000;
+    cars.push({
+      name: `Car Model ${i}`,
+      price,
+      type,
+      image: "img/car" + i + ".jpg",
+      phone: "+233248538335"
+    });
+  }
+
+  function displayCars(filteredCars = cars) {
+    const list = document.getElementById("carList");
+    list.innerHTML = "";
+    filteredCars.forEach(car => {
+      const div = document.createElement("div");
+      div.className = "car";
+      div.innerHTML = `
+        <img src="${car.image}" alt="${car.name}" />
+        <h3>${car.name}</h3>
+        <p>Type: ${car.type}</p>
+        <p>Price: GHS ${car.price.toLocaleString()}</p>
+        <a href="tel:${car.phone}" class="call">Call Seller</a>
+        <a class="whatsapp" target="_blank"
+           href="https://wa.me/${car.phone.replace('+233248538335', '')}?text=Hi, I'm interested in ${car.name} listed at GHS ${car.price}. See image: ${car.image}">
+           WhatsApp Seller</a>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function payWithPaystack() {
+    let handler = PaystackPop.setup({
+      key: 'pk_live_69b30841ad8db86c2a18c89911df774498852a9e', // Replace with your Paystack public key
+      email: 'buyer@.com',
+      amount: 1, // 1 GHS in pesewas
+      currency: 'GHS',
+      callback: function(response) {
+        document.getElementById("paywall").style.display = "none";
+        document.getElementById("carList").style.display = "grid";
+        document.getElementById("filters").style.display = "block";
+        displayCars(); 
+      },
+      onClose: function() {
+        alert('Payment was cancelled');
+      }
+    });
+    handler.openIframe();
+  }
+
+  // Filter logic
+  document.getElementById("typeFilter").addEventListener("change", applyFilters);
+  document.getElementById("priceFilter").addEventListener("change", applyFilters);
+
+  function applyFilters() {
+    const type = document.getElementById("typeFilter").value;
+    const priceRange = document.getElementById("priceFilter").value;
+
+    let filtered = cars;
+    if (type) {
+      filtered = filtered.filter(car => car.type === type);
+    }
+    if (priceRange) {
+      if (priceRange === "low") filtered = filtered.filter(car => car.price < 50000);
+      if (priceRange === "mid") filtered = filtered.filter(car => car.price >= 50000 && car.price <= 100000);
+      if (priceRange === "high") filtered = filtered.filter(car => car.price > 100000);
+    }
+    displayCars(filtered);
+  }
+</script>
+
+</body>
+</html>
